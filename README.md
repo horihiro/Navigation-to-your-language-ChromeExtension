@@ -1,13 +1,20 @@
-# Navigate to Default Language
+# Chrome Extension for Navigation to your default language
+<!--
+![Chrome Web Store Version](https://img.shields.io/chrome-web-store/v/...)
+![Chrome Web Store Last Updated](https://img.shields.io/chrome-web-store/last-updated/...)
+![Chrome Web Store Stars](https://img.shields.io/chrome-web-store/stars/...)
+![Chrome Web Store Users](https://img.shields.io/chrome-web-store/users/...)
+-->
 
 A Chrome extension that removes locale/language from the URL to navigate to the same page in the default language.
 
 ## Features
 
-- Automatically remove a language/locale part from the URL of the supported websites page when moved from other domains,  
-  then navigate to the your default language version of the site.  
-- Context menu option to manually navigate to the default language version.
-- Displays a toast message with a link to the original locale page.
+- Automatically navigate to the your default language version of the site by removing a language/locale part from the URL of the supported websites page when moved from other domains.  
+  And display a toast message with a link to the original locale page.
+- Context menus on supported websites to ...
+  1. Navigate to the default language version
+  1. Copy a URL without locale/language
 
 ## Supported Websites and URL formats
 
@@ -22,6 +29,13 @@ A Chrome extension that removes locale/language from the URL to navigate to the 
 
 ## Installation
 
+<!--
+### From Chrome Web Store
+This extension can be installed from [Chrome Web Store](https://chromewebstore.google.com/detail/...).
+
+
+### From this repository
+-->
 1. Clone the repository:
    ```sh
    git clone <repository-url>
@@ -60,11 +74,6 @@ A Chrome extension that removes locale/language from the URL to navigate to the 
    - Open the Debug panel.
    - Select "Launch Chrome" or "Launch Edge".
    - Click the green play button to start debugging.
-
-### File Structure
-- `service-worker.ts`: Service worker script for background tasks.
-- `main.ts`: Content script for handling messages and displaying toast notifications.
-- `main.html` : HTML for the popup UI.
 
 ## License
 MIT © horihiro
