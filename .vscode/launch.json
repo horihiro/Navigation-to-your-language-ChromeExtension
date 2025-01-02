@@ -1,0 +1,37 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "Launch Chrome",
+      "runtimeArgs": [
+        "--remote-debugging-port=9222",
+        "--load-extension=${workspaceFolder}", // this is the path to the extension folder
+        "chrome://extensions",
+        // "data:text/html;charset=UTF-8,<html><head><title>test</title><body><ul><li><a href=\"https://learn.microsoft.com/en-us/azure/?product=popular\">Microsoft Learn</a></li><li><a href=\"https://docs.aws.amazon.com/en_us/#welcome\">AWS</a></li><li><a href=\"https://cloud.google.com/why-google-cloud/?hl=en&gclsrc=aw.ds\">Google Cloud</a></li><li><a href=\"https://docs.github.com/en/get-started\">Github</a></li></ul></body></html>",
+        "data:text/html;charset=UTF-8;base64,PGh0bWw+PGhlYWQ+PHRpdGxlPnRlc3Q8L3RpdGxlPjxib2R5Pjx1bD48bGk+PGEgaHJlZj0iaHR0cHM6Ly9sZWFybi5taWNyb3NvZnQuY29tL2VuLXVzL2F6dXJlLz9wcm9kdWN0PXBvcHVsYXIiPk1pY3Jvc29mdCBMZWFybjwvYT48L2xpPjxsaT48YSBocmVmPSJodHRwczovL2RvY3MuYXdzLmFtYXpvbi5jb20vZW5fdXMvI3dlbGNvbWUiPkFXUzwvYT48L2xpPjxsaT48YSBocmVmPSJodHRwczovL2Nsb3VkLmdvb2dsZS5jb20vd2h5LWdvb2dsZS1jbG91ZC8/aGw9ZW4mZ2Nsc3JjPWF3LmRzIj5Hb29nbGUgQ2xvdWQ8L2E+PC9saT48bGk+PGEgaHJlZj0iaHR0cHM6Ly9kb2NzLmdpdGh1Yi5jb20vZW4vZ2V0LXN0YXJ0ZWQiPkdpdGh1YjwvYT48L2xpPjwvdWw+PC9ib2R5PjwvaHRtbD4K"
+      ],
+      "env": {
+        "CHROME_DEVELOPER_TOOLS": true
+      },
+      "preLaunchTask": "build"
+    },
+    {
+      "type": "msedge",
+      "request": "launch",
+      "name": "Launch Edge",
+      "runtimeArgs": [
+        "--remote-debugging-port=9222",
+        "--load-extension=${workspaceFolder}", // this is the path to the extension folder
+        "chrome://extensions",
+        // "data:text/html;charset=UTF-8,<html><head><title>test</title><body><ul><li><a href=\"https://learn.microsoft.com/en-us/azure/?product=popular\">Microsoft Learn</a></li><li><a href=\"https://docs.aws.amazon.com/en_us/#welcome\">AWS</a></li><li><a href=\"https://cloud.google.com/why-google-cloud/?hl=en&gclsrc=aw.ds\">Google Cloud</a></li><li><a href=\"https://docs.github.com/en/get-started\">Github</a></li></ul></body></html>",
+        "data:text/html;charset=UTF-8;base64,PGh0bWw+PGhlYWQ+PHRpdGxlPnRlc3Q8L3RpdGxlPjxib2R5Pjx1bD48bGk+PGEgaHJlZj0iaHR0cHM6Ly9sZWFybi5taWNyb3NvZnQuY29tL2VuLXVzL2F6dXJlLz9wcm9kdWN0PXBvcHVsYXIiPk1pY3Jvc29mdCBMZWFybjwvYT48L2xpPjxsaT48YSBocmVmPSJodHRwczovL2RvY3MuYXdzLmFtYXpvbi5jb20vZW5fdXMvI3dlbGNvbWUiPkFXUzwvYT48L2xpPjxsaT48YSBocmVmPSJodHRwczovL2Nsb3VkLmdvb2dsZS5jb20vd2h5LWdvb2dsZS1jbG91ZC8/aGw9ZW4mZ2Nsc3JjPWF3LmRzIj5Hb29nbGUgQ2xvdWQ8L2E+PC9saT48bGk+PGEgaHJlZj0iaHR0cHM6Ly9kb2NzLmdpdGh1Yi5jb20vZW4vZ2V0LXN0YXJ0ZWQiPkdpdGh1YjwvYT48L2xpPjwvdWw+PC9ib2R5PjwvaHRtbD4K"
+      ],
+      "env": {
+        "CHROME_DEVELOPER_TOOLS": true
+      },
+      "preLaunchTask": "build"
+    }
+  ]
+}

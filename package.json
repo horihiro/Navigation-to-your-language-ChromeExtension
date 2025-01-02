@@ -1,0 +1,21 @@
+{
+  "scripts": {
+    "clean": "node -e \"require('fs-extra').removeSync('./dist')\"",
+    "build:mkdir": "node -e \"const fs = require('fs-extra'); fs.ensureDirSync('./dist/contentScript'); fs.ensureDirSync('./dist/background');\"",
+    "build": "npm run clean && npm run build:mkdir && npm run build:background && npm run build:content",
+    "build:dev": "npm run clean && npm run build:mkdir && npm run build:dev:background && npm run build:dev:content",
+    "build:background": "esbuild ./src/background/service-worker.ts --bundle --minify --outfile=./dist/background/service-worker.js",
+    "build:content": "esbuild ./src/content/main.ts --bundle --minify --outfile=./dist/contentScript/main.js ",
+    "build:popup": " esbuild ./src/popup/popup.ts --bundle --minify --outfile=./dist/popup/js/bundle.js ",
+    "build:dev:background": "esbuild ./src/background/service-worker.ts --bundle --sourcemap=inline --outfile=./dist/background/service-worker.js",
+    "build:dev:content": "esbuild ./src/content/main.ts --bundle --sourcemap=inline --outfile=./dist/contentScript/main.js ",
+    "build:dev:popup": " esbuild ./src/popup/popup.ts --bundle --sourcemap=inline --outfile=./dist/popup/js/bundle.js ",
+    "build:copyFiles": "node -e \"const fs = require('fs-extra'); fs.copySync('./src/popup', './dist/popup');\"",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.287",
+    "esbuild": "^0.24.2",
+    "fs-extra": "^11.2.0"
+  }
+}

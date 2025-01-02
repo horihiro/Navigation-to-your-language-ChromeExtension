@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "Navigate to your language",
+  "version": "0.0.1",
+  "version_name": "0.0.1-ashoro",
+  "description": "A Chrome extension that remove locale/language from the URL to navigate to the same page in the default language.",
+  "permissions": [
+    "tabs",
+    "storage",
+    "webNavigation",
+    "contextMenus"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://learn.microsoft.com/*",
+        "https://docs.aws.amazon.com/*",
+        "https://cloud.google.com/*",
+        "https://docs.github.com/*"
+      ],
+      "js": [
+        "dist/contentScript/main.js"
+      ]
+    }
+  ],
+  "background": {
+    "service_worker": "dist/background/service-worker.js"
+  }
+}
