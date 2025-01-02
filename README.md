@@ -4,16 +4,21 @@ A Chrome extension that removes locale/language from the URL to navigate to the 
 
 ## Features
 
-- Automatically navigate to the default language version of supported websites.
+- Automatically remove a language/locale part from the URL of the supported websites page when moved from other domains,  
+  then navigate to the your default language version of the site.  
 - Context menu option to manually navigate to the default language version.
 - Displays a toast message with a link to the original locale page.
 
-## Supported Websites
+## Supported Websites and URL formats
 
-- Microsoft Learn
-- AWS Documentation
-- Google Cloud
-- GitHub Documentation
+- Microsoft Learn  
+  i.e. `https://learn.microsoft.com/<LOCALE>/...`
+- AWS Documentation  
+  i.e. `https://docs.aws.amazon.com/<LOCALE>/...`
+- Google Cloud  
+  i.e. `https://cloud.googlecom/...?...&hr=<LANGUAGE>&...`
+- GitHub Documentation  
+  i.e. `https://docs.github.com/<LANGUAGE>/...`
 
 ## Installation
 
