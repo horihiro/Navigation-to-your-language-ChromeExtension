@@ -1,3 +1,4 @@
+import { targetUrlPatterns, contextMenus } from '../common/const';
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 (async () => {
@@ -26,3 +27,10 @@ const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
   // await sleep(2000);
   toast.remove();
 })();
+
+chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
+  if (message.type === contextMenus[1].id) {
+    const pattern = targetUrlPatterns.find(p => location.href.match(p));
+    navigator.clipboard.writeText(location.href.replace(pattern, ''));
+  }
+});

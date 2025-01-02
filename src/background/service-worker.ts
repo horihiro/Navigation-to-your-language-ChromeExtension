@@ -1,29 +1,32 @@
+import { targetUrlPatterns, contextMenus } from '../common/const';
+
 console.debug('Start service-worker.js');
 startHeartbeat();
 
-const targetUrlPatterns = [
-  /(?<=^https?:\/\/learn\.microsoft\.com)\/[a-z]{2,3}(?:-[a-z]{4})?-[a-z]{2}(?=\/|$)/,
-  /(?<=^https?:\/\/docs\.aws\.amazon\.com)\/[a-z]{2}_[a-z]{2}(?=\/|$)/,
-  /(?<=^https?:\/\/cloud\.google\.com\/.*hl=)[a-z]{2}(?=&|$)/,
-  /(?<=^https?:\/\/docs\.github\.com)\/[a-z]{2}(?=\/|$)/
-];
-
-chrome.runtime.onInstalled.addListener(() => {
-  chrome.contextMenus.create({
-    id: 'open_default_locale',
-    title: 'Open default locale page',
-  });
+chrome.runtime.onInstalled.addListener(async () => {
+  for await (const menu of contextMenus) {
+    await chrome.contextMenus.create(menu);
+  };
 });
 
 chrome.tabs.onActivated.addListener(async (activeInfo) => {
   const tab = await chrome.tabs.get(activeInfo.tabId);
   const pattern = targetUrlPatterns.find(p => tab.url.match(p));
-  await chrome.contextMenus.update('open_default_locale', { visible: !!pattern });
+  for await (const menu of contextMenus) {
+    await chrome.contextMenus.update(menu.id, { visible: !!pattern });
+  };
 });
 
-chrome.contextMenus.onClicked.addListener(async (_, tab) => {
-  const pattern = targetUrlPatterns.find(p => tab.url.match(p));
-  await chrome.tabs.update(tab.id, { url: tab.url.replace(pattern, '') });
+chrome.contextMenus.onClicked.addListener(async (info, tab) => {
+  switch (info.menuItemId) {
+    case contextMenus[0].id:
+      const pattern = targetUrlPatterns.find(p => tab.url.match(p));
+      await chrome.tabs.update(tab.id, { url: tab.url.replace(pattern, '') });
+      break;
+    case contextMenus[1].id:
+      await chrome.tabs.sendMessage(tab.id, { type: info.menuItemId });
+      break;
+  }
 });
 
 const urlMap = new Map();
@@ -45,7 +48,11 @@ chrome.webNavigation.onCommitted.addListener(async (details) => {
   urlMap.set(details.tabId, null);
 
   const pattern = targetUrlPatterns.find(p => details.url.match(p));
-  if (urls.tab.active) await chrome.contextMenus.update('open_default_locale', { visible: !!pattern });
+  if (urls.tab.active) {
+    for await (const menu of contextMenus) {
+      await chrome.contextMenus.update(menu.id, { visible: !!pattern });
+    }
+  }
   // Skip if the navigation is not for target domains.
   if (!pattern) return;
 
