@@ -1,4 +1,4 @@
-# Chrome Extension for Navigation to your default language
+# <img src="./img/icon128.png" width="32px" valign="middle">Chrome Extension for Navigation to your default language
 <!--
 ![Chrome Web Store Version](https://img.shields.io/chrome-web-store/v/...)
 ![Chrome Web Store Last Updated](https://img.shields.io/chrome-web-store/last-updated/...)
