@@ -1,10 +1,8 @@
 # <img src="./img/icon128.png" width="32px" valign="middle">Chrome Extension for Navigation to your default language
-<!--
-![Chrome Web Store Version](https://img.shields.io/chrome-web-store/v/...)
-![Chrome Web Store Last Updated](https://img.shields.io/chrome-web-store/last-updated/...)
-![Chrome Web Store Stars](https://img.shields.io/chrome-web-store/stars/...)
-![Chrome Web Store Users](https://img.shields.io/chrome-web-store/users/...)
--->
+![Chrome Web Store Version](https://img.shields.io/chrome-web-store/v/afklbjnoklmjbbeibdhpgcfobjlinhck)
+![Chrome Web Store Last Updated](https://img.shields.io/chrome-web-store/last-updated/afklbjnoklmjbbeibdhpgcfobjlinhck)
+![Chrome Web Store Stars](https://img.shields.io/chrome-web-store/stars/afklbjnoklmjbbeibdhpgcfobjlinhck)
+![Chrome Web Store Users](https://img.shields.io/chrome-web-store/users/afklbjnoklmjbbeibdhpgcfobjlinhck)
 
 A Chrome extension that removes locale/language from the URL to navigate to the same page in the default language.
 
@@ -29,13 +27,11 @@ A Chrome extension that removes locale/language from the URL to navigate to the 
 
 ## Installation
 
-<!--
 ### From Chrome Web Store
-This extension can be installed from [Chrome Web Store](https://chromewebstore.google.com/detail/...).
+This extension can be installed from [Chrome Web Store](https://chromewebstore.google.com/detail/afklbjnoklmjbbeibdhpgcfobjlinhck).
 
 
 ### From this repository
--->
 1. Clone the repository:
    ```sh
    git clone <repository-url>
