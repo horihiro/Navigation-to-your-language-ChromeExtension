@@ -44,7 +44,7 @@ chrome.webNavigation.onBeforeNavigate.addListener(async (details) => {
 
 chrome.webNavigation.onCommitted.addListener(async (details) => {
   const urls = urlMap.get(details.tabId);
-  if (!urls?.from) return;
+  if (urls?.from == null) return;
   urlMap.set(details.tabId, null);
 
   const pattern = targetUrlPatterns.find(p => details.url.match(p));
