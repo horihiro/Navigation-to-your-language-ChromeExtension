@@ -3,6 +3,13 @@ import { targetUrlPatterns, contextMenus } from '../common/const';
 console.debug('Start service-worker.js');
 startHeartbeat();
 
+const updateContextMenus = async (url) => {
+  const pattern = targetUrlPatterns.find(p => url.match(p));
+  const items = await chrome.storage.local.get({ exclusionUrlPatterns: [] });
+  for await (const menu of contextMenus) {
+    await chrome.contextMenus.update(menu.id, { visible: !!pattern && (menu.id !== contextMenus[3].id || items.exclusionUrlPatterns.length > 0) });
+  };
+}
 chrome.runtime.onInstalled.addListener(async () => {
   for await (const menu of contextMenus) {
     await chrome.contextMenus.create(menu);
@@ -11,20 +18,22 @@ chrome.runtime.onInstalled.addListener(async () => {
 
 chrome.tabs.onActivated.addListener(async (activeInfo) => {
   const tab = await chrome.tabs.get(activeInfo.tabId);
-  const pattern = targetUrlPatterns.find(p => tab.url.match(p));
-  for await (const menu of contextMenus) {
-    await chrome.contextMenus.update(menu.id, { visible: !!pattern });
-  };
+  await updateContextMenus(tab.url);
 });
 
 chrome.contextMenus.onClicked.addListener(async (info, tab) => {
+  const pattern = targetUrlPatterns.find(p => tab.url.match(p));
   switch (info.menuItemId) {
     case contextMenus[0].id:
-      const pattern = targetUrlPatterns.find(p => tab.url.match(p));
       await chrome.tabs.update(tab.id, { url: tab.url.replace(pattern, '') });
       break;
     case contextMenus[1].id:
+    case contextMenus[2].id:
       await chrome.tabs.sendMessage(tab.id, { type: info.menuItemId });
+      break;
+    case contextMenus[3].id:
+      await chrome.storage.local.set({ exclusionUrlPatterns: [] });
+      await updateContextMenus(tab.url);
       break;
   }
 });
@@ -36,6 +45,13 @@ chrome.webNavigation.onBeforeNavigate.addListener(async (details) => {
   if (details.frameType !== 'outermost_frame') return;
 
   const tab = await chrome.tabs.get(details.tabId);
+  // Skip if the URL is in exclusion URL patterns.
+  const items = await chrome.storage.local.get({ exclusionUrlPatterns: [] });
+  if (items.exclusionUrlPatterns.find(p => new RegExp(p).test(new URL(details.url).href))) {
+    await updateContextMenus(details.url);
+    return
+  };
+
   // Skip if the navigation is within the same domain.
   if (tab.url && new URL(tab.url).host === new URL(details.url).host) return;
 
@@ -49,9 +65,7 @@ chrome.webNavigation.onCommitted.addListener(async (details) => {
 
   const pattern = targetUrlPatterns.find(p => details.url.match(p));
   if (urls.tab.active) {
-    for await (const menu of contextMenus) {
-      await chrome.contextMenus.update(menu.id, { visible: !!pattern });
-    }
+    await updateContextMenus(details.url);
   }
   // Skip if the navigation is not for target domains.
   if (!pattern) return;

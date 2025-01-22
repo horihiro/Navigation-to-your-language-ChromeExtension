@@ -29,8 +29,18 @@ const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 })();
 
 chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
-  if (message.type === contextMenus[1].id) {
-    const pattern = targetUrlPatterns.find(p => location.href.match(p));
-    navigator.clipboard.writeText(location.href.replace(pattern, ''));
+  switch (message.type) {
+    case contextMenus[1].id:
+      const pattern = targetUrlPatterns.find(p => location.href.match(p));
+      navigator.clipboard.writeText(location.href.replace(pattern, ''));
+      break;
+    case contextMenus[2].id:
+      const patten = window.prompt('Enter the URL pattern to exclude:', `^${location.href.replace(/([\/.?*+\[\]\(\)\\^$])/g, '\\$1')}$`);
+      if (patten) {
+        const items = await chrome.storage.local.get({ exclusionUrlPatterns: [] });
+        items.exclusionUrlPatterns.includes(patten) || items.exclusionUrlPatterns.push(patten);
+        await chrome.storage.local.set({ exclusionUrlPatterns: items.exclusionUrlPatterns });
+      }
+      break;
   }
 });

@@ -11,4 +11,10 @@ export const contextMenus = [{
 }, {
   id: 'copy_url_without_locale',
   title: 'Copy URL without locale',
+}, {
+  id: 'add_exlusion_url_pattern',
+  title: 'Add exclution URL pattern',
+}, {
+  id: 'clear_exlusion_url_pattern_list',
+  title: 'Clear exclution URL pattern list',
 }];
