@@ -35,11 +35,13 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
       navigator.clipboard.writeText(location.href.replace(pattern, ''));
       break;
     case contextMenus[2].id:
-      const patten = window.prompt('Enter the URL pattern to exclude:', `^${location.href.replace(/([\/.?*+\[\]\(\)\\^$])/g, '\\$1')}$`);
-      if (patten) {
-        const items = await chrome.storage.local.get({ exclusionUrlPatterns: [] });
-        items.exclusionUrlPatterns.includes(patten) || items.exclusionUrlPatterns.push(patten);
-        await chrome.storage.local.set({ exclusionUrlPatterns: items.exclusionUrlPatterns });
+      const pathPattern = window.prompt(
+        'Enter the path pattern on this domain to exclude:',
+        `^${location.href.replace(location.origin, '').replace(/([\/.?*+\[\]\(\)\\^$])/g, '\\$1')}$`
+      );
+      if (pathPattern) {
+        const host = location.host;
+        await chrome.runtime.sendMessage({ type: contextMenus[2].id, host, pattern: pathPattern });
       }
       break;
   }
