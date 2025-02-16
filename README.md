@@ -13,6 +13,9 @@ A Chrome extension that removes locale/language from the URL to navigate to the 
 - Context menus on supported websites to ...
   1. Navigate to the default language version
   1. Copy a URL without locale/language
+  1. Add exclusion path pattern
+  1. Remove exclusion path pattern
+  1. Clear all exclusion path patterns
 
 ## Supported Websites and URL formats
 
@@ -77,6 +80,10 @@ This extension can be installed from [Chrome Web Store](https://chromewebstore.g
    - Click the green play button to start debugging.
 
 ## Change logs
+
+### [0.0.3](https://github.com/horihiro/Navigation-to-your-language-ChromeExtension/releases/tag/0.0.3)
+Add Feature(s)
+  - Add exclution path pattern [#5](https://github.com/horihiro/Navigation-to-your-language-ChromeExtension/pull/5)
 
 ### [0.0.2](https://github.com/horihiro/Navigation-to-your-language-ChromeExtension/releases/tag/0.0.2)
 Bug fix

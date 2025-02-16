@@ -29,8 +29,20 @@ const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 })();
 
 chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
-  if (message.type === contextMenus[1].id) {
-    const pattern = targetUrlPatterns.find(p => location.href.match(p));
-    navigator.clipboard.writeText(location.href.replace(pattern, ''));
+  switch (message.type) {
+    case contextMenus[1].id:
+      const pattern = targetUrlPatterns.find(p => location.href.match(p));
+      navigator.clipboard.writeText(location.href.replace(pattern, ''));
+      break;
+    case contextMenus[2].id:
+      const pathPattern = window.prompt(
+        'Enter the path pattern on this domain to exclude:',
+        `^${location.href.replace(location.origin, '').replace(/([\/.?*+\[\]\(\)\\^$])/g, '\\$1')}$`
+      );
+      if (pathPattern) {
+        const host = location.host;
+        await chrome.runtime.sendMessage({ type: contextMenus[2].id, host, pattern: pathPattern });
+      }
+      break;
   }
 });
