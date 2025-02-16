@@ -13,6 +13,9 @@ A Chrome extension that removes locale/language from the URL to navigate to the 
 - Context menus on supported websites to ...
   1. Navigate to the default language version
   1. Copy a URL without locale/language
+  1. Add exclusion path pattern
+  1. Remove exclusion path pattern
+  1. Clear all exclusion path patterns
 
 ## Supported Websites and URL formats
 
