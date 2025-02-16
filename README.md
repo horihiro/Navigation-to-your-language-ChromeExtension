@@ -81,6 +81,10 @@ This extension can be installed from [Chrome Web Store](https://chromewebstore.g
 
 ## Change logs
 
+### [0.0.3](https://github.com/horihiro/Navigation-to-your-language-ChromeExtension/releases/tag/0.0.3)
+Add Feature(s)
+  - Add exclution path pattern [#5](https://github.com/horihiro/Navigation-to-your-language-ChromeExtension/pull/5)
+
 ### [0.0.2](https://github.com/horihiro/Navigation-to-your-language-ChromeExtension/releases/tag/0.0.2)
 Bug fix
   - Cannot redirect when opening on new tab/window [#1](https://github.com/horihiro/Navigation-to-your-language-ChromeExtension/issues/1)
