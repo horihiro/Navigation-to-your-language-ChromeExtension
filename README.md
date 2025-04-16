@@ -81,6 +81,10 @@ This extension can be installed from [Chrome Web Store](https://chromewebstore.g
 
 ## Change logs
 
+### [0.0.4](https://github.com/horihiro/Navigation-to-your-language-ChromeExtension/releases/tag/0.0.4)
+Improve Feature(s)
+  - Keep a toast showing until clicking [#9](https://github.com/horihiro/Navigation-to-your-language-ChromeExtension/pull/9)
+
 ### [0.0.3](https://github.com/horihiro/Navigation-to-your-language-ChromeExtension/releases/tag/0.0.3)
 Add Feature(s)
   - Add exclution path pattern [#5](https://github.com/horihiro/Navigation-to-your-language-ChromeExtension/pull/5)
