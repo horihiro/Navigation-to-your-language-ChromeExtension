@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Navigate to your language",
-  "version": "0.0.3",
-  "version_name": "0.0.3-chippubetsu",
+  "version": "0.0.4",
+  "version_name": "0.0.4-date",
   "description": "A Chrome extension that remove locale/language from the URL to navigate to the same page in the default language.",
   "permissions": [
     "tabs",

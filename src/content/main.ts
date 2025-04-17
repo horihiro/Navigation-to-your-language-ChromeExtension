@@ -6,26 +6,42 @@ const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
   if (!originalUrl) return;
   // show toast message that will fade out after 10 seconds
   const toast = document.createElement('div');
-  toast.style.cssText = `
-    cursor: pointer;
-    position: fixed;
-    bottom: 10px;
-    left: 10px;
-    background-color: #333;
-    color: white;
-    padding: 10px;
-    border-radius: 5px;
-    z-index: 10001;
-  `;
+  toast.style.cursor = 'pointer';
+  toast.style.position = 'fixed';
+  toast.style.bottom = '10px';
+  toast.style.left = '10px';
+  toast.style.backgroundColor = '#333';
+  toast.style.color = 'white';
+  toast.style.padding = '10px';
+  toast.style.borderRadius = '5px';
+  toast.style.zIndex = '10001';
+  toast.style.animationDuration = '1s';
   toast.innerHTML = `Click this to go to the original locale page.`;
+  const style = document.createElement('style');
+  style.innerHTML = `
+.nav2yourlocale-fadeOut {
+  animation-name: fadeOut;
+}
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+`;
+  toast.appendChild(style);
   toast.addEventListener('click', () => {
     window.location.href = originalUrl;
   });
+  document.body.addEventListener('click', () => {
+    toast.classList.add('nav2yourlocale-fadeOut');
+  });
+  toast.addEventListener('animationend', () => {
+    toast.remove();
+  });
   document.body.appendChild(toast);
-  await sleep(5000);
-  // toast.style.cssText += `      animation: fadeOut 2s forwards;`;
-  // await sleep(2000);
-  toast.remove();
 })();
 
 chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
