@@ -6,19 +6,21 @@ startHeartbeat();
 const updateContextMenus = async (url) => {
   const pattern = targetUrlPatterns.find(p => url.match(p));
   const { exclusionUrlPatterns } = await chrome.storage.local.get({ exclusionUrlPatterns: {} });
-  const exclusionUrlPatternsByHost = exclusionUrlPatterns[new URL(url).host] || [];
-  for await (const menu of contextMenus) {
-    await chrome.contextMenus.update(menu.id, { visible: !!pattern && ((menu.id !== contextMenus[3].id && menu.id !== contextMenus[4].id) || exclusionUrlPatternsByHost.length > 0) });
-  };
-  for await (const host of Object.keys(exclusionUrlPatterns)) {
-    for await (const pattern of exclusionUrlPatterns[host]) {
-      await chrome.contextMenus.update(
-        `exclusion_path_pattern_${host}_${pattern}`, {
+  try {
+    const exclusionUrlPatternsByHost = exclusionUrlPatterns[new URL(url).host] || [];
+    for await (const menu of contextMenus) {
+      await chrome.contextMenus.update(menu.id, { visible: !!pattern && ((menu.id !== contextMenus[3].id && menu.id !== contextMenus[4].id) || exclusionUrlPatternsByHost.length > 0) });
+    };
+    for await (const host of Object.keys(exclusionUrlPatterns)) {
+      for await (const pattern of exclusionUrlPatterns[host]) {
+        await chrome.contextMenus.update(
+          `exclusion_path_pattern_${host}_${pattern}`, {
           visible: host === new URL(url).host
         }
-      );
+        );
+      }
     }
-  }
+  } catch { }
 }
 
 chrome.runtime.onInstalled.addListener(async () => {
@@ -74,7 +76,7 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
 
 const urlMap = new Map();
 chrome.webNavigation.onBeforeNavigate.addListener(async (details) => {
-
+  urlMap.set(details.tabId, { processing: true });
   // Skip if the navigation is in a sub frame.
   if (details.frameType !== 'outermost_frame') return;
 
@@ -84,6 +86,7 @@ chrome.webNavigation.onBeforeNavigate.addListener(async (details) => {
   const url = new URL(details.url);
   const exclusionUrlPatterns = items.exclusionUrlPatterns[url.host] || [];
   if (exclusionUrlPatterns.find(p => new RegExp(p).test(url.href.replace(url.origin, ''))) != null) {
+    urlMap.set(details.tabId, null);
     await updateContextMenus(details.url);
     return
   };
@@ -95,7 +98,14 @@ chrome.webNavigation.onBeforeNavigate.addListener(async (details) => {
 });
 
 chrome.webNavigation.onCommitted.addListener(async (details) => {
-  const urls = urlMap.get(details.tabId);
+  const urls = await (async () => {
+    do {
+      await new Promise(resolve => setTimeout(resolve, 10));
+      const urls = urlMap.get(details.tabId);
+      if (!(urls?.processing)) return urls;
+    } while (true);
+    return urls;
+  })();
   if (urls?.from == null) return;
   urlMap.set(details.tabId, null);
 
@@ -120,7 +130,9 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
     const urls = urlMap.get(sender.tab.id);
     if (urls?.original === sender.url) return;
     sendResponse(urls?.original);
+    console.log(`onMessage: ${Date.now()}`)
     urlMap.set(sender.tab.id, null);
+    console.log(`----`)
   } else if (request.type === contextMenus[2].id) {
     const { host, pattern } = request;
     const items = await chrome.storage.local.get({ exclusionUrlPatterns: {} });
