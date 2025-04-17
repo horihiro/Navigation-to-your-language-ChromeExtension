@@ -130,9 +130,7 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
     const urls = urlMap.get(sender.tab.id);
     if (urls?.original === sender.url) return;
     sendResponse(urls?.original);
-    console.log(`onMessage: ${Date.now()}`)
     urlMap.set(sender.tab.id, null);
-    console.log(`----`)
   } else if (request.type === contextMenus[2].id) {
     const { host, pattern } = request;
     const items = await chrome.storage.local.get({ exclusionUrlPatterns: {} });
