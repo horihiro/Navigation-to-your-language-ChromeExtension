@@ -1,6 +1,6 @@
 import { targetUrlPatterns, contextMenus } from '../common/const';
 
-console.debug('Start service-worker.js');
+// console.debug('Start service-worker.js');
 startHeartbeat();
 
 const updateContextMenus = async (url) => {
@@ -76,61 +76,103 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
 
 const urlMap = new Map();
 chrome.webNavigation.onBeforeNavigate.addListener(async (details) => {
-  urlMap.set(details.tabId, { processing: true });
+  // console.debug(`[onBeforeNavigate]start: ${details.url}`);
+  if (urlMap.has(details.tabId)) {
+    // console.debug(`[onBeforeNavigate]exit: ${details.url}, already in progress`);
+    return;
+  }
+
+  // Skip if the navigation is not for target domains.
+  const pattern = targetUrlPatterns.find(p => details.url.match(p));
+  if (!pattern) {
+    // console.debug(`[onCommitted]exit: ${details.url} not for target domains`);
+    urlMap.delete(details.tabId);
+    return;
+  };
   // Skip if the navigation is in a sub frame.
   if (details.frameType !== 'outermost_frame') return;
 
+  urlMap.set(details.tabId, { status: 'varidating' });
   const tab = await chrome.tabs.get(details.tabId);
-  // Skip if the URL is in exclusion URL patterns.
+  // Skip if the navigation is within the same domain.
+  if (tab.url && new URL(tab.url).host === new URL(details.url).host) {
+    // console.debug(`[onBeforeNavigate]exit: ${details.url}, same domain`);
+    urlMap.delete(details.tabId);
+    return;
+  };
+
   const items = await chrome.storage.local.get({ exclusionUrlPatterns: {} });
   const url = new URL(details.url);
   const exclusionUrlPatterns = items.exclusionUrlPatterns[url.host] || [];
+
+  // Skip if the URL is in exclusion URL patterns.
   if (exclusionUrlPatterns.find(p => new RegExp(p).test(url.href.replace(url.origin, ''))) != null) {
-    urlMap.set(details.tabId, null);
+    // console.debug(`[onBeforeNavigate]exit: ${details.url}, in exclusion URL patterns`);
+    urlMap.delete(details.tabId);
     await updateContextMenus(details.url);
-    return
+    return;
   };
 
-  // Skip if the navigation is within the same domain.
-  if (tab.url && new URL(tab.url).host === new URL(details.url).host) return;
-
-  urlMap.set(details.tabId, { from: tab.url, tab });
+  urlMap.set(details.tabId, { from: tab.url, tab, status: 'passed' });
+  // console.debug(`[onBeforeNavigate]exit: ${details.url}, passed`);
 });
 
 chrome.webNavigation.onCommitted.addListener(async (details) => {
+  // console.debug(`[onCommitted]start: ${details.url}`);
   const urls = await (async () => {
+    let urls = null;
+    let i = 0;
     do {
-      await new Promise(resolve => setTimeout(resolve, 10));
-      const urls = urlMap.get(details.tabId);
-      if (!(urls?.processing)) return urls;
-    } while (true);
+      await new Promise(resolve => setTimeout(resolve, 100));
+      urls = urlMap.get(details.tabId);
+      if (!urls || urls.status === 'passed' || urls.status === 'navigating') break;
+      urls = null;
+      i++;
+    } while (i < 100);
+    // console.debug(`[onCommitted]info: ${i}times waited`);
     return urls;
   })();
-  if (urls?.from == null) return;
-  urlMap.set(details.tabId, null);
-
-  const pattern = targetUrlPatterns.find(p => details.url.match(p));
+  if (urls?.status === 'navigating') {
+    // console.debug(`[onCommitted]exit: ${details.url} already in progress`);
+    return;
+  } else if (!(urls?.from)) {
+    // console.debug(`[onCommitted]exit: ${details.url} not in progress`);
+    urlMap.delete(details.tabId);
+    return;
+  }
   if (urls.tab.active) {
     await updateContextMenus(details.url);
   }
-  // Skip if the navigation is not for target domains.
-  if (!pattern) return;
 
   // Skip if the navigation is by forward/back button.
-  if (details.transitionQualifiers.indexOf('forward_back') >= 0) return;
+  if (details.transitionQualifiers.indexOf('forward_back') >= 0) {
+    // console.debug(`[onCommitted]exit: ${details.url} by forward/back button`);
+    urlMap.delete(details.tabId);
+    return;
+  };
 
   urls.from = null;
   urls.original = details.url;
+  urls.status = 'navigating';
   urlMap.set(details.tabId, urls);
+  const pattern = targetUrlPatterns.find(p => details.url.match(p));
   await chrome.tabs.update(details.tabId, { url: details.url.replace(pattern, '') });
+  // console.debug(`[onCommitted]exit: ${details.url} navigated`);
 });
 
 chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
   if (request.type === 'getOriginalUrl') {
+    // console.debug(`[onMessage]start: ${sender.url}`);
     const urls = urlMap.get(sender.tab.id);
-    if (urls?.original === sender.url) return;
-    sendResponse(urls?.original);
-    urlMap.set(sender.tab.id, null);
+    if (!(urls?.original)) {
+      // console.debug(`[onMessage]exit: ${sender.url} not in progress`);
+    } else if (urls.original === sender.url) {
+      // console.debug(`[onMessage]exit: ${sender.url} sent original URL`);
+    } else {
+      // console.debug(`[onMessage]exit: ${sender.url} sent response`);
+      urlMap.delete(sender.tab.id);
+    }
+    sendResponse(urls?.original === sender.url ? null : urls?.original);
   } else if (request.type === contextMenus[2].id) {
     const { host, pattern } = request;
     const items = await chrome.storage.local.get({ exclusionUrlPatterns: {} });
